@@ -1,0 +1,6 @@
+{
+    "editor.fontSize": 24,
+    "files.associations": {
+        "unistd.h": "c"
+    }
+}
