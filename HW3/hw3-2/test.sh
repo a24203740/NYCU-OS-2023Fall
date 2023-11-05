@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "hw3-2.cpp"
-g++ --std=c++2a hw3-2.cpp 
+g++ --std=c++2a hw3-2.cpp
 if [ $? -eq 0 ]; then
   # small testcases: test for deadlock or unconverged
   for testcase in 1 2 3
