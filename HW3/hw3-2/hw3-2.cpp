@@ -19,7 +19,7 @@ counting_semaphore semaphores{MAX_THREADS};
 // random number generator
 random_device dev;
 mt19937 rng(dev());
-uniform_int_distribution<mt19937::result_type> dist(10, 30);
+uniform_int_distribution<mt19937::result_type> dist(1, 10);
 
 // num of vertices & num of edges
 int V, E;
@@ -62,11 +62,13 @@ void maximum_independent_set(int v) {
 
     while (!converged) 
     {
+        semaphores.acquire();
         // then doing what a vertex will do
         if (vertex_checked[v]) 
         {
-            std::this_thread::sleep_for(std::chrono::nanoseconds(dist(rng)));
             converged = is_converged();
+            semaphores.release();
+            std::this_thread::sleep_for(std::chrono::nanoseconds(dist(rng)));
         } 
         else 
         {
@@ -115,13 +117,14 @@ void maximum_independent_set(int v) {
                 lk.unlock();
                 cv.notify_all();
             }
+            semaphores.release();
             std::this_thread::sleep_for(std::chrono::nanoseconds(dist(rng)));
         }
     }
 }
 
 int main(void) {
-    //auto start = chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
     cin >> V >> E;
 
     thread t[V];
@@ -150,13 +153,13 @@ int main(void) {
         cout << i << ' ';
     }
     cout << '\n';
-    // auto end = chrono::high_resolution_clock::now();
-    // double time_taken = 
-    //   chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    auto end = chrono::high_resolution_clock::now();
+    double time_taken = 
+      chrono::duration_cast<chrono::nanoseconds>(end - start).count();
  
-    // time_taken *= 1e-9;
+    time_taken *= 1e-9;
  
-    // cout << "Time taken by program is : " << fixed 
-    //      << time_taken << setprecision(9);
-    // cout << " sec" << endl;
+    cout << "Time taken by program is : " << fixed 
+         << time_taken << setprecision(9);
+    cout << " sec" << endl;
 }
